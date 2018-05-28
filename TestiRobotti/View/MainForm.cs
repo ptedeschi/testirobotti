@@ -19,6 +19,7 @@ using System.Linq;
 using System.Reflection;
 using System.Timers;
 using System.Windows.Forms;
+using TestiRobotti.Worker;
 
 namespace BotTester.View
 {
@@ -38,14 +39,52 @@ namespace BotTester.View
         public MainForm()
         {
             InitializeComponent();
+        }
 
-            //this.txtTestSuitePath.Text = @"C:\Users\patrick.tedeschi\Desktop\ikro test.json";
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            Reset();
+            UpdateUI();
+
+            btnExecute.Enabled = false;
+        }
+
+        private void buttonLoad_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                txtTestSuitePath.Text = openFileDialog.FileName;
+
+                try
+                {
+                    String json = File.ReadAllText(txtTestSuitePath.Text);
+                    testSuite = JsonConvert.DeserializeObject<TestSuite>(json);
+
+                    btnExecute.Enabled = true;
+                }
+                catch
+                {
+                    MessageBox.Show("Invalid Test Suite");
+
+                    btnExecute.Enabled = false;
+                }
+            }
+        }
+
+        private void Reset()
+        {
+            numOfDone = 0;
+            numOfThreads = 0;
+            numOfTimeouts = 0;
+            numOfErrors = 0;
+            actualIteration = 0;
+            executionTime.Clear();
         }
 
         private void btnExecute_Click(object sender, System.EventArgs e)
         {
-            String json = File.ReadAllText(txtTestSuitePath.Text);
-            testSuite = JsonConvert.DeserializeObject<TestSuite>(json);
+            // Reset all vars
+            Reset();
 
             beginTime = DateTime.Now;
 
@@ -59,7 +98,8 @@ namespace BotTester.View
 
             for (int i = 0; i < users; i++)
             {
-                var worker = new BackgroundWorker();
+                var worker = new NamedBackgroundWorker();
+                worker.Id = i;
                 worker.DoWork += new DoWorkEventHandler(Run);
                 worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(RunCompleted);
                 worker.RunWorkerAsync(iterations);
@@ -112,7 +152,7 @@ namespace BotTester.View
 
             try
             {
-                var worker = sender as BackgroundWorker;
+                var worker = sender as NamedBackgroundWorker;
 
                 if (worker.CancellationPending)
                 {
@@ -145,6 +185,17 @@ namespace BotTester.View
 
                 for (int i = 0; i < iterations; i++)
                 {
+                    System.Diagnostics.Debug.WriteLine("WorkId: " + worker.Id);
+
+                    // As several BackgroundWorker can have access to this code
+                    // incrementing the actual iteration only for first created thread
+                    if (worker.Id == 0)
+                    {
+                        actualIteration++;
+                    }
+
+                    UpdateUI();
+
                     foreach (Looptest looptest in testSuite.looptest)
                     {
                         Validate(bot, userId, looptest.request, looptest.custom_request, looptest.response);
@@ -220,7 +271,7 @@ namespace BotTester.View
                 txtTimeouts.Text = numOfTimeouts.ToString();
                 txtErrors.Text = numOfErrors.ToString();
                 txtDone.Text = numOfDone.ToString();
-                //txtActualIteration.Text = actualIteration.ToString();
+                txtActualIteration.Text = actualIteration.ToString();
 
                 if (executionTime.Count > 0)
                 {
@@ -263,13 +314,13 @@ namespace BotTester.View
 
                 if (data.activities.Length != parameters.Length)
                 {
-                    CopyToClipboard(JsonConvert.SerializeObject(data));
+                    CopyToClipboard(text + custom_text + JsonConvert.SerializeObject(data));
                     throw new StateException(string.Format("Activities length doesn't match.\n\nReceived: {0}\nExpected: {1}", data.activities.Length, parameters.Length));
                 }
 
                 if (!TextUtils.Clean(activity.text).Equals(TextUtils.Clean(parameters[index])))
                 {
-                    CopyToClipboard(JsonConvert.SerializeObject(data));
+                    CopyToClipboard(text + custom_text + JsonConvert.SerializeObject(data));
                     throw new StateException(string.Format("Text doesn't match.\n\nReceived: {0}\nExpected: {1}", activity.text, parameters[index]));
                 }
 
@@ -277,14 +328,6 @@ namespace BotTester.View
             }
 
             UpdateUI();
-        }
-
-        private void buttonLoad_Click(object sender, EventArgs e)
-        {
-            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                txtTestSuitePath.Text = openFileDialog.FileName;
-            }
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

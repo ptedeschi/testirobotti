@@ -59,6 +59,8 @@ namespace BotTester.View
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtErrorDetail = new System.Windows.Forms.TextBox();
+            this.txtActualIteration = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -353,7 +355,7 @@ namespace BotTester.View
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -370,6 +372,29 @@ namespace BotTester.View
             this.txtErrorDetail.Size = new System.Drawing.Size(500, 115);
             this.txtErrorDetail.TabIndex = 29;
             // 
+            // txtActualIteration
+            // 
+            this.txtActualIteration.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtActualIteration.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtActualIteration.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtActualIteration.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtActualIteration.Location = new System.Drawing.Point(1062, 457);
+            this.txtActualIteration.Name = "txtActualIteration";
+            this.txtActualIteration.Size = new System.Drawing.Size(148, 23);
+            this.txtActualIteration.TabIndex = 31;
+            this.txtActualIteration.Text = "1";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.label9.Location = new System.Drawing.Point(1061, 438);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(102, 16);
+            this.label9.TabIndex = 30;
+            this.label9.Text = "Current iteration";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -377,6 +402,8 @@ namespace BotTester.View
             this.AutoSize = true;
             this.BackColor = System.Drawing.SystemColors.WindowFrame;
             this.ClientSize = new System.Drawing.Size(1222, 552);
+            this.Controls.Add(this.txtActualIteration);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.txtErrorDetail);
             this.Controls.Add(this.buttonLoad);
             this.Controls.Add(this.txtDetail);
@@ -407,6 +434,7 @@ namespace BotTester.View
             this.MaximizeBox = false;
             this.Name = "MainForm";
             this.Text = "Testi Robotti";
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -445,6 +473,8 @@ namespace BotTester.View
         private ToolStripMenuItem helpToolStripMenuItem;
         private ToolStripMenuItem aboutToolStripMenuItem;
         private TextBox txtErrorDetail;
+        private TextBox txtActualIteration;
+        private Label label9;
     }
 }
 
