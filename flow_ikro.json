@@ -1,0 +1,119 @@
+{
+   "name":"Ikro",
+   "description":"LBot Test Suite for Ikro chatbot",
+   "secretKey":"dZlovfBOZwA.cwA.UZg.hEMJhObB_j0E2BzNuZ1VqHolRwrRxyTVk-i2BTP3e7g",
+   "test":[
+      {
+         "request":"Oi",
+         "response":[
+            "DebugEscolha uma opção para prosseguir. E a qualquer momento pode pedir ajuda me enviando o texto ajuda."
+         ]
+      },
+      {
+         "request":"Solicitar boleto",
+         "response":[
+            "Continuar com o CNPJ 80.802.515/0001-44?"
+         ]
+      },
+      {
+         "request":"Sim",
+         "response":[
+            "Legal, já encontrei o seu cadastro.",
+            "Me informe o número da NF."
+         ]
+      },
+      {
+         "request":"123",
+         "response":[
+            "NFs informadas até agora: 123. Se tiver outra NF, me informe o número."
+         ]
+      },
+      {
+         "request":"456",
+         "response":[
+            "NFs informadas até agora: 123, 456. Se tiver outra NF, me informe o número."
+         ]
+      },
+      {
+         "request":"Enviar email com as NFs",
+         "response":[
+            "Os boletos serão enviados para o e-mail cadastrado",
+            "Se precisar de alguma coisa é só me chamar!"
+         ]
+      },
+      {
+         "request":"Oi",
+         "response":[
+            "DebugEscolha uma opção para prosseguir. E a qualquer momento pode pedir ajuda me enviando o texto ajuda."
+         ]
+      },
+      {
+         "request":"Pesquisar",
+         "response":[
+            "Entre com o IK, marca ou modelo"
+         ]
+      },
+      {
+         "request":"IK5225",
+         "response":[
+            "",
+            ""
+         ]
+      }
+   ],
+   "looptest":[
+      {
+         "request":"Consultar",
+         "response":[
+            "Continuar com o CNPJ 80.802.515/0001-44?"
+         ]
+      },
+      {
+         "request":"Sim",
+         "response":[
+            "Legal, já encontrei o seu cadastro.",
+            "Estou checando o estoque...",
+            "Produto disponível em estoque",
+            "Deseja que um atendente Ikro entre em contato?"
+         ]
+      },
+      {
+         "request":"Não entrar em contato",
+         "response":[
+            "Ok, sem problemas!",
+            "Como você quer continuar?"
+         ]
+      },
+      {
+         "request":"Continuar com IK5225",
+         "response":[
+            ""
+         ]
+      },
+      {
+         "request":"Procurar",
+         "response":[
+            "Selecione um estado"
+         ]
+      },
+      {
+         "custom_request":"{\"from\": {  \"id\": \"default-user\",},\"type\": \"message\",\"value\": {  \"state\": \"SP\"}\r\n}",
+         "response":[
+            "Selecione uma cidade"
+         ]
+      },
+      {
+         "custom_request":"{\"from\": {  \"id\": \"default-user\",},\"type\": \"message\",\"value\": {  \"cityId\": \"1313\"}\r\n}",
+         "response":[
+			"",
+            "Como você quer continuar?"
+         ]
+      },
+      {
+         "request":"Continuar com IK5225",
+         "response":[
+            ""
+         ]
+      }
+   ]
+}
