@@ -29,9 +29,24 @@ namespace BotTester.Core
             this.botSecret = secret;
         }
 
-        public void Authentication()
+        public void Reauthenticate()
         {
-            throw new NotImplementedException();
+            Dictionary<string, string> header = new Dictionary<string, string>();
+            header.Add("authorization", "Bearer " + this.token);
+
+            var client = new HttpRequest();
+            HttpResponse response = client.Request(HttpRequest.HttpMethod.Post, "https://directline.botframework.com/v3/directline/tokens/refresh", header);
+
+            if (response.IsSuccess)
+            {
+                string content = response.Content;
+
+                token = new Node(content)["token"];
+            }
+            else
+            {
+                throw new ConnectException(response.ErrorMessage);
+            }
         }
 
         public void StartConversation()
@@ -107,7 +122,15 @@ namespace BotTester.Core
                 string content = response.Content;
 
                 string id = new Node(content)["id"];
-                id = id.Split('|')[1];
+
+                if (!string.IsNullOrEmpty(id))
+                {
+                    id = id.Split('|')[1];
+                }
+                else
+                {
+                    throw new ConnectException("Received invalid Id: " + content);
+                }
 
                 return id;
             }
@@ -133,7 +156,15 @@ namespace BotTester.Core
                 string content = response.Content;
 
                 string id = new Node(content)["id"];
-                id = id.Split('|')[1];
+
+                if (!string.IsNullOrEmpty(id))
+                {
+                    id = id.Split('|')[1];
+                }
+                else
+                {
+                    throw new ConnectException("Received invalid Id: " + content);
+                }
 
                 return id;
             }

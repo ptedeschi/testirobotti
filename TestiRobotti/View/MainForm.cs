@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 using TestiRobotti.Worker;
@@ -180,7 +181,17 @@ namespace BotTester.View
 
                 foreach (Test test in testSuite.test)
                 {
-                    Validate(bot, userId, test.request, test.custom_request, test.response);
+                    try
+                    {
+                        Validate(bot, userId, test.request, test.custom_request, test.response);
+                    }
+                    catch (ConnectException ex)
+                    {
+                        LogDetail(ex.Message);
+
+                        numOfTimeouts++;
+                        UpdateUI();
+                    }
                 }
 
                 for (int i = 0; i < iterations; i++)
@@ -192,30 +203,36 @@ namespace BotTester.View
                     if (worker.Id == 0)
                     {
                         actualIteration++;
+
+                        // Refresh token each 10 times
+                        if (actualIteration%10 == 0)
+                        {
+                            bot.Reauthenticate();
+                        }
                     }
 
                     UpdateUI();
 
-                    foreach (Looptest looptest in testSuite.looptest)
+                    if (testSuite.looptest != null)
                     {
-                        Validate(bot, userId, looptest.request, looptest.custom_request, looptest.response);
+                        foreach (Looptest looptest in testSuite.looptest)
+                        {
+                            try
+                            {
+                                Validate(bot, userId, looptest.request, looptest.custom_request, looptest.response);
+                            }
+                            catch (ConnectException ex)
+                            {
+                                LogDetail(ex.Message);
+
+                                numOfTimeouts++;
+                                UpdateUI();
+                            }
+
+                           Thread.Sleep(1000);
+                        }
                     }
                 }
-            }
-            catch (ConnectException ex)
-            {
-                //Debug.WriteLine("Exception");
-
-                //MessageBox.Show(ex.ToString() + ex.Message);
-
-                //foreach (BackgroundWorker backgroundWorker in backgroundWorkers)
-                //{
-                //    backgroundWorker.CancelAsync();
-                //}
-                LogDetail(ex.Message);
-
-                numOfTimeouts++;
-                UpdateUI();
             }
             catch (StateException ex)
             {
@@ -311,6 +328,13 @@ namespace BotTester.View
             foreach (Activity activity in data.activities)
             {
                 LogBot("Bot", activity.text);
+
+                if (data.activities.Length >= 100)
+                {
+                    // For some unknown reason, in some cases, the id is 0000000 or 0000001
+                    // so it's returning all the messages. Skipping the behavior for now
+                    return;
+                }
 
                 if (data.activities.Length != parameters.Length)
                 {
